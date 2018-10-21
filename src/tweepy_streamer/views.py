@@ -47,6 +47,8 @@ class TwitterListener(StreamListener):
         return True
 
     def on_error(self, status):
+        if status == '420':
+            return False
         print(status)
 
 class StreamerView(View):
