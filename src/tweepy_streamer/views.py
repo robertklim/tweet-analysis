@@ -53,7 +53,7 @@ class StreamerView(View):
     template_name = 'tweepy_streamer/streamer.html'
 
     def get(self, request, *args, **kwargs):
-        hash_tag_list = ['lebrone james', 'kevin durant']
+        hash_tag_list = ['lebrone james', 'kevin durant', 'james harden', 'stephen curry']
         fetched_tweets_filename = 'tweets.json'
 
         twitter_streamer = TwitterStreamer()
