@@ -12,13 +12,21 @@ from tweepy.streaming import StreamListener
 
 from . import twitter_credentials
 
+class TwitterAuthenticator():
+
+    def authenticate_twitter_app(self):
+        auth = OAuthHandler(twitter_credentials.CONSUMER_KEY, twitter_credentials.CONSUMER_SECRET)
+        auth.set_access_token(twitter_credentials.ACCESS_TOKEN, twitter_credentials.ACCESS_TOKON_SECRET)
+        return auth
+
 class TwitterStreamer():
+
+    def __init__(self):
+        self.twitter_authenticator = TwitterAuthenticator()
 
     def stream_tweets(self, fetched_tweets_filename, hash_tag_list):
         listener = TwitterListener(fetched_tweets_filename)
-        auth = OAuthHandler(twitter_credentials.CONSUMER_KEY, twitter_credentials.CONSUMER_SECRET)
-        auth.set_access_token(twitter_credentials.ACCESS_TOKEN, twitter_credentials.ACCESS_TOKON_SECRET)
-
+        auth = self.twitter_authenticator.authenticate_twitter_app()
         stream = Stream(auth, listener)
 
         stream.filter(track=hash_tag_list)

@@ -133,3 +133,6 @@ Press h to open a hovercard with more details.
 
 # Twitter credentials
 twitter_credentials.py
+
+# Ignore file with tweets
+tweets.json
