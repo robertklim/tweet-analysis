@@ -4,6 +4,8 @@ from django.views.generic import (
     View,
 )
 
+from tweepy import API
+from tweepy import Cursor
 from tweepy import OAuthHandler
 from tweepy import Stream
 from tweepy.streaming import StreamListener
@@ -13,7 +15,7 @@ from . import twitter_credentials
 class TwitterStreamer():
 
     def stream_tweets(self, fetched_tweets_filename, hash_tag_list):
-        listener = StdOutListener(fetched_tweets_filename)
+        listener = TwitterListener(fetched_tweets_filename)
         auth = OAuthHandler(twitter_credentials.CONSUMER_KEY, twitter_credentials.CONSUMER_SECRET)
         auth.set_access_token(twitter_credentials.ACCESS_TOKEN, twitter_credentials.ACCESS_TOKON_SECRET)
 
@@ -21,7 +23,7 @@ class TwitterStreamer():
 
         stream.filter(track=hash_tag_list)
 
-class StdOutListener(StreamListener):
+class TwitterListener(StreamListener):
 
     def __init__(self, fetched_tweets_filename):
         self.fetched_tweets_filename = fetched_tweets_filename
