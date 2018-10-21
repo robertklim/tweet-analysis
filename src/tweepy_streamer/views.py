@@ -12,6 +12,18 @@ from tweepy.streaming import StreamListener
 
 from . import twitter_credentials
 
+class TwitterClient():
+    def __init__(self, twitter_user=None):
+        self.auth = TwitterAuthenticator().authenticate_twitter_app()
+        self.twitter_client = API(self.auth)
+        self.twitter_user = twitter_user
+
+    def get_user_timeline_tweets(self, num_tweets):
+        tweets = []
+        for tweet in Cursor(self.twitter_client.user_timeline, id=self.twitter_user).items(num_tweets):
+            tweets.append(tweet)
+        return tweets
+
 class TwitterAuthenticator():
 
     def authenticate_twitter_app(self):
@@ -58,8 +70,11 @@ class StreamerView(View):
         hash_tag_list = ['lebrone james', 'kevin durant', 'james harden', 'stephen curry']
         fetched_tweets_filename = 'tweets.json'
 
-        twitter_streamer = TwitterStreamer()
-        twitter_streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)
+        twitter_client = TwitterClient('joerogan')
+        print(twitter_client.get_user_timeline_tweets(1))
+
+        # twitter_streamer = TwitterStreamer()
+        # twitter_streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)
 
         return render(request, self.template_name, {})
 
