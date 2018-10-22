@@ -4,6 +4,8 @@ from django.views.generic import (
     View,
 )
 
+from textblob import TextBlob
+
 from tweepy import API
 from tweepy import Cursor
 from tweepy import OAuthHandler
@@ -13,6 +15,7 @@ from tweepy.streaming import StreamListener
 from . import twitter_credentials
 import numpy as np
 import pandas as pd
+import re
 import matplotlib.pyplot as plt
 
 class TwitterClient():
@@ -82,7 +85,20 @@ class TwitterListener(StreamListener):
         print(status)
 
 class TweetAnalyzer():
+
+    def clean_tweet(self, tweet):
+        return ' '.join(re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)", " ", tweet).split())
     
+    def analyze_sentiment(self, tweet):
+        analysis = TextBlob(self.clean_tweet(tweet))
+
+        if analysis.sentiment.polarity > 0:
+            return 1
+        elif analysis.sentiment.polarity == 0:
+            return 0
+        else:
+            return -1
+
     def tweets_to_data_frame(self, tweets):
         df = pd.DataFrame(data=[tweet.text for tweet in tweets], columns=['tweets'])
         
@@ -113,13 +129,17 @@ class StreamerView(View):
 
         df = tweet_analyzer.tweets_to_data_frame(tweets)
 
+        df['sentiment'] = np.array([tweet_analyzer.analyze_sentiment(tweet) for tweet in df['tweets']])
+
+        print(df.head(10))
+
         # print(np.mean(df['len']))
         # print(np.max(df['likes']))
         # print(np.max(df['retweets']))
 
-        time_likes = pd.Series(data=df['likes'].values, index=df['date'])
-        time_likes.plot(figsize=(16, 4), color='r')
-        plt.show()
+        # time_likes = pd.Series(data=df['likes'].values, index=df['date'])
+        # time_likes.plot(figsize=(16, 4), color='r')
+        # plt.show()
 
         # hash_tag_list = ['lebrone james', 'kevin durant', 'james harden', 'stephen curry']
         # fetched_tweets_filename = 'tweets.json'

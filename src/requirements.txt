@@ -3,3 +3,4 @@ tweepy
 pandas
 numpy
 matplotlib
+textblob
