@@ -13,6 +13,7 @@ from tweepy.streaming import StreamListener
 from . import twitter_credentials
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 
 class TwitterClient():
     def __init__(self, twitter_user=None):
@@ -111,7 +112,14 @@ class StreamerView(View):
         # print(tweets[0].retweet_count)
 
         df = tweet_analyzer.tweets_to_data_frame(tweets)
-        print(df.head(10))
+
+        # print(np.mean(df['len']))
+        # print(np.max(df['likes']))
+        # print(np.max(df['retweets']))
+
+        time_likes = pd.Series(data=df['likes'].values, index=df['date'])
+        time_likes.plot(figsize=(16, 4), color='r')
+        plt.show()
 
         # hash_tag_list = ['lebrone james', 'kevin durant', 'james harden', 'stephen curry']
         # fetched_tweets_filename = 'tweets.json'
